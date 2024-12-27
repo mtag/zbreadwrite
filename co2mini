@@ -1,0 +1,27 @@
+#! /home/mtag/.pyenv/shims/python
+# -*- coding: utf-8 -*-
+
+from CO2Meter import CO2Meter
+import time
+import json
+
+SENSOR_TIMEOUT = 5.0  # seconds to wait for sensor data
+RETRY_DELAY = 0.5  # seconds to wait before retrying after failed data read
+MAX_RETRIES = int(SENSOR_TIMEOUT / RETRY_DELAY)
+
+def main():
+    sensor = CO2Meter("/dev/co2mini")
+    retries = 0
+    while True:
+        data = sensor.get_data()
+        if 'temperature' in data and 'co2' in data:
+            break
+        retries += 1
+        if retries > MAX_RETRIES:
+            print("Error: Unable to read sensor data.")
+            return
+        time.sleep(RETRY_DELAY)
+    print(json.dumps(data))
+
+if __name__ == '__main__':
+    main()
