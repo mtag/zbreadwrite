@@ -1,0 +1,8 @@
+[Unit]
+Description=Timer to get switchbot temperature values for zabbix agent
+
+[Timer]
+OnCalendar=*-*-* *:*:00
+
+[Install]
+WantedBy=timer.target
