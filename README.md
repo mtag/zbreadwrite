@@ -91,16 +91,19 @@ WantedBy=timer.target
 
 1. execute timer and verify.
 
+    You MUST start SAMPLE.**timer**,  without **timer** systemd runs it only one-shot.
+
 ```shell
 sudo systemctl daemon-reload
-sudo systemctl start SAMPLE
+sudo systemctl start SAMPLE.timer
 watch /var/lib/zabbix/params/SAMPLE.json 
 ```
 
 2. enable the timer
 
+
 ```shell
-sudo systemctl enable SAMPLE
+sudo systemctl enable SAMPLE.timer
 ```
 
 
