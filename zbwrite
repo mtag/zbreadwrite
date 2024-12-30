@@ -1,0 +1,11 @@
+#! /bin/bash
+
+TARGET="$1"
+CMD="$2"
+DIR="${TARGET%/*}"
+RUN="${TARGET}.$$"
+if ${CMD} > "${RUN}" 2>/dev/null; then
+    /bin/mv -f "${RUN}" "${TARGET}"
+else
+    rm "${RUN}"
+fi
