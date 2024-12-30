@@ -1,10 +1,9 @@
 #! /bin/bash
 
 TARGET="$1"
-CMD="$2"
-DIR="${TARGET%/*}"
+shift
 RUN="${TARGET}.$$"
-if ${CMD} > "${RUN}" 2>/dev/null; then
+if $@ > "${RUN}" ; then
     /bin/mv -f "${RUN}" "${TARGET}"
 else
     rm "${RUN}"
