@@ -1,0 +1,67 @@
+#! /bin/bash
+
+BASE=https://api.switch-bot.com
+
+dir="${HOME}/.api-key/switch-bot"
+key="$(cat $dir/key.txt)"
+json="${dir}/devices.json"
+if [ ! -e "${json}" ]; then
+    curl -sS \
+	 -H "Content-Type: application/json" \
+	 -H "Authorization: $key" \
+	 -X GET \
+	 "$BASE/v1.0/devices" \
+	| jq .body > $json
+    if [ "$(cat ${json})" = "null" ]; then
+	echo error : failed to get device list.
+	exit 1
+    fi
+fi
+
+function concatenate
+{
+    if [ $CSV -eq 1 ] ;then
+	echo "Name,ID,type,temperature,humidity,battery"
+	cat
+    else
+	jq -s 'add'
+    fi
+}
+
+if [ "$1" = "-c" ]; then
+    CSV=1
+    shift
+else
+    CSV=0
+fi
+
+
+DEVICE_QUERY='.deviceList[] | select(((has("deviceType")|not) or (.deviceType == "Meter"))'
+if [ $# -gt 0 ]; then
+    DEVICE_QUERY="${DEVICE_QUERY} and (.deviceId | IN(\"$(echo $@ | sed -e 's/ /","/g')\"))"
+fi
+DEVICE_QUERY="${DEVICE_QUERY})| [.deviceName,.deviceId] | @csv"
+
+(cat $json | jq -r "${DEVICE_QUERY}" | while read LINE
+do
+    NAME=${LINE%\",\"*}
+    NAME=${NAME#\"}
+    ID=${LINE#*\",\"}
+    ID=${ID%\"}
+    if [ ${CSV} -eq 1 ]; then
+	echo -n "\"${NAME}\","
+	curl -sS \
+	     -H "Content-Type: application/json" \
+	     -H "Authorization: $key" \
+	     "$BASE/v1.0/devices/$ID/status" \
+	    | jq -r '.body | [.deviceId,.deviceType,.temperature,.humidity,.battery]|@csv'
+    else
+	echo "{\"${ID}\" : "$(
+	    curl -sS \
+		 -H "Content-Type: application/json" \
+		 -H "Authorization: $key" \
+		 "$BASE/v1.0/devices/$ID/status" \
+		| jq -r ".body | . += {\"Name\": \"${NAME}\"}")'}'
+
+    fi
+done) | concatenate
