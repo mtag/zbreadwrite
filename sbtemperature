@@ -20,48 +20,75 @@ fi
 
 function concatenate
 {
-    if [ $CSV -eq 1 ] ;then
-	echo "Name,ID,type,temperature,humidity,battery"
+    if [ $FORMAT -eq 0 ] ;then
+	jq -s 'add'
+    elif [ $FORMAT -eq 1 ] ;then
+	echo "ID,type,temperature,humidity,battery,Name"
 	cat
     else
-	jq -s 'add'
+	echo "ID	type	temp.	humidity	battery	Name"
+	cat
     fi
 }
 
-if [ "$1" = "-c" ]; then
-    CSV=1
-    shift
+ALL=0
+FORMAT=0
+OUTPUT=
+while (( $# > 0 ))
+do
+    case $1 in
+	-c | --csv)
+	    FORMAT=1
+	    OUTPUT="@csv"
+	    shift
+	    ;;
+	-t | --tsv)
+	    FORMAT=2
+	    OUTPUT="@tsv"
+	    shift
+	    ;;
+	-j | --json)
+	    FORMAT=0
+	    shift
+	    ;;
+	-a | --all)
+	    ALL=1
+	    shift
+	    ;;
+	*)
+	    break
+	    ;;
+    esac
+done
+
+if [ ${ALL} -eq 1 ]; then
+    COND=""
+elif [ $# -gt 0 ]; then
+    COND="|select(.deviceId | IN(\"$(echo $@ | sed -e 's/ /","/g')\"))"
 else
-    CSV=0
+    COND="|select((has(\"deviceType\")|not) or (.deviceType == \"Meter\"))"
 fi
 
-
-DEVICE_QUERY='.deviceList[] | select(((has("deviceType")|not) or (.deviceType == "Meter"))'
-if [ $# -gt 0 ]; then
-    DEVICE_QUERY="${DEVICE_QUERY} and (.deviceId | IN(\"$(echo $@ | sed -e 's/ /","/g')\"))"
-fi
-DEVICE_QUERY="${DEVICE_QUERY})| [.deviceName,.deviceId] | @csv"
-
+DEVICE_QUERY=".deviceList[] ${COND}| [.deviceName,.deviceId] | @csv"
+#echo "${DEVICE_QUERY}" 1>&2
 (cat $json | jq -r "${DEVICE_QUERY}" | while read LINE
 do
     NAME=${LINE%\",\"*}
     NAME=${NAME#\"}
     ID=${LINE#*\",\"}
     ID=${ID%\"}
-    if [ ${CSV} -eq 1 ]; then
-	echo -n "\"${NAME}\","
-	curl -sS \
-	     -H "Content-Type: application/json" \
-	     -H "Authorization: $key" \
-	     "$BASE/v1.0/devices/$ID/status" \
-	    | jq -r '.body | [.deviceId,.deviceType,.temperature,.humidity,.battery]|@csv'
-    else
+    if [ ${FORMAT} -eq 0 ]; then
 	echo "{\"${ID}\" : "$(
 	    curl -sS \
 		 -H "Content-Type: application/json" \
 		 -H "Authorization: $key" \
 		 "$BASE/v1.0/devices/$ID/status" \
 		| jq -r ".body | . += {\"Name\": \"${NAME}\"}")'}'
-
+    else
+	curl -sS \
+	     -H "Content-Type: application/json" \
+	     -H "Authorization: $key" \
+	     "$BASE/v1.0/devices/$ID/status" \
+	    | jq -r ".body | [.deviceId,.deviceType,.temperature,.humidity,.battery,\"${NAME}\"] | ${OUTPUT}"
     fi
 done) | concatenate
