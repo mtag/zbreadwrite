@@ -1,0 +1,10 @@
+[Unit]
+Description=Get smartctl values for zabbix agent
+
+[Service]
+Type=oneshot
+User=mtag
+ExecStart=sudo /usr/local/bin/zbwrite /var/lib/zabbix/params/smartctl.json  /home/mtag/bin/getsmart /dev/sdb /dev/sd{d..l}
+
+[Install]
+WantedBy=mutil-user.target

@@ -1,0 +1,121 @@
+{
+  "sdb": {
+    "state": "standby"
+  },
+  "sdd": {
+    "state": "standby"
+  },
+  "sde": {
+    "state": "standby"
+  },
+  "sdf": {
+    "state": "standby"
+  },
+  "sdg": {
+    "state": "standby"
+  },
+  "sdh": {
+    "state": "standby"
+  },
+  "sdi": {
+    "Raw_Read_Error_Rate":49928513,
+    "Spin_Up_Time":0,
+    "Start_Stop_Count":2264,
+    "Reallocated_Sector_Ct":0,
+    "Seek_Error_Rate":651489773,
+    "Power_On_Hours":40326,
+    "Spin_Retry_Count":0,
+    "Power_Cycle_Count":89,
+    "Unknown_Attribute":0,
+    "Reported_Uncorrect":0,
+    "Command_Timeout":8590131199,
+    "Airflow_Temperature_Cel":35,
+    "Power-Off_Retract_Count":44,
+    "Load_Cycle_Count":18964,
+    "Temperature_Celsius":35,
+    "Current_Pending_Sector":0,
+    "Offline_Uncorrectable":0,
+    "UDMA_CRC_Error_Count":0,
+    "Multi_Zone_Error_Rate":0,
+    "Head_Flying_Hours":30236,
+    "Total_LBAs_Written":614226568824,
+    "Total_LBAs_Read":1174101162862,
+    "state": "active/idle"
+  },
+  "sdj": {
+    "Raw_Read_Error_Rate":19607769,
+    "Spin_Up_Time":0,
+    "Start_Stop_Count":2284,
+    "Reallocated_Sector_Ct":0,
+    "Seek_Error_Rate":104821768,
+    "Power_On_Hours":11879,
+    "Spin_Retry_Count":0,
+    "Power_Cycle_Count":37,
+    "Unknown_Attribute":0,
+    "Reported_Uncorrect":0,
+    "Command_Timeout":0,
+    "Airflow_Temperature_Cel":34,
+    "Power-Off_Retract_Count":9,
+    "Load_Cycle_Count":11345,
+    "Temperature_Celsius":34,
+    "Current_Pending_Sector":0,
+    "Offline_Uncorrectable":0,
+    "UDMA_CRC_Error_Count":0,
+    "Multi_Zone_Error_Rate":0,
+    "Head_Flying_Hours":6597,
+    "Total_LBAs_Written":63109829814,
+    "Total_LBAs_Read":1191156542809,
+    "state": "unknown"
+  },
+  "sdk": {
+    "Raw_Read_Error_Rate":187608296,
+    "Spin_Up_Time":0,
+    "Start_Stop_Count":2659,
+    "Reallocated_Sector_Ct":0,
+    "Seek_Error_Rate":106545851,
+    "Power_On_Hours":11879,
+    "Spin_Retry_Count":0,
+    "Power_Cycle_Count":37,
+    "Unknown_Attribute":0,
+    "Reported_Uncorrect":0,
+    "Command_Timeout":0,
+    "Airflow_Temperature_Cel":30,
+    "Power-Off_Retract_Count":9,
+    "Load_Cycle_Count":28417,
+    "Temperature_Celsius":30,
+    "Current_Pending_Sector":0,
+    "Offline_Uncorrectable":0,
+    "UDMA_CRC_Error_Count":0,
+    "Multi_Zone_Error_Rate":0,
+    "Head_Flying_Hours":2230,
+    "Total_LBAs_Written":63115720257,
+    "Total_LBAs_Read":768584759385,
+    "state": "unknown"
+  },
+  "sdl": {
+    "Raw_Read_Error_Rate":141184251,
+    "Spin_Up_Time":0,
+    "Start_Stop_Count":2505,
+    "Reallocated_Sector_Ct":0,
+    "Seek_Error_Rate":103493442,
+    "Power_On_Hours":11879,
+    "Spin_Retry_Count":0,
+    "Power_Cycle_Count":37,
+    "Unknown_Attribute":0,
+    "Reported_Uncorrect":0,
+    "Command_Timeout":0,
+    "Airflow_Temperature_Cel":30,
+    "Power-Off_Retract_Count":9,
+    "Load_Cycle_Count":28301,
+    "Temperature_Celsius":30,
+    "Current_Pending_Sector":0,
+    "Offline_Uncorrectable":0,
+    "UDMA_CRC_Error_Count":0,
+    "Multi_Zone_Error_Rate":0,
+    "Head_Flying_Hours":2208,
+    "Total_LBAs_Written":67019321193,
+    "Total_LBAs_Read":1307124519708,
+    "state": "unknown"
+  },
+  "__dummy__":{}
+}
