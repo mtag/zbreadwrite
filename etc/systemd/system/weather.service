@@ -1,0 +1,10 @@
+[Unit]
+Description=Get weather in Yokohama for zabbix agent
+
+[Service]
+Type=oneshot
+User=mtag
+ExecStart=/usr/local/bin/zbwrite /var/lib/zabbix/params/weather-yokohama.json curl -s https://weather.tsukumijima.net/api/forecast/city/140010
+
+[Install]
+WantedBy=mutil-user.target
