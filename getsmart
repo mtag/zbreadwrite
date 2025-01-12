@@ -1,5 +1,7 @@
 #! /bin/bash
 
+TYPES=$(smartctl --scan)
+
 echo "{"
 LAST=""
 for target
@@ -8,9 +10,19 @@ do
 	echo "${LAST}",
 	LAST=""
     fi
-    STATUS=$(/usr/sbin/hdparm -C "/dev/${target}" \
+    if grep "${target} -d sat" > /dev/null 2>&1 ; then
+	# If the device type is identified as 'sat'(=SATA), in many case it's connected with USB-SATA bridge now. The I/F doesn't handle hdparm status.
+	IO=$(iostat -o JSON  sdb sd{d..l} | jq '.sysstat.hosts[0].statistics[0].disk[] | select(.disk_device=="sde").tps')
+	if [ "$IO" -gt 0 ]; then
+	    STATUS="active"
+	else
+	    STATUS="standby"
+	fi
+    else
+	STATUS=$(/usr/sbin/hdparm -C "/dev/${target}" \
 		 | /usr/bin/grep "state is:" \
 		 | cut -c 19-)
+    fi
     echo "  \"$target\": {"
     if [ "S{STATUS}" = "standby" ]; then
 	echo '    "state": "standby"'
