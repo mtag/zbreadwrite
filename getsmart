@@ -1,31 +1,27 @@
 #! /bin/bash
 
-/usr/sbin/hdparm -C $@ | {
-    declare -A targets
-    drive=
-    while read line
-    do
-	if echo "${line}" | /usr/bin/grep /dev/ >/dev/null 2>&1; then
-	    drive="${line%:*}"
-	    drive="${drive#/dev/}"
-	elif echo "${line}" | /usr/bin/grep "state is:" > /dev/null 2>&1 ; then
-	    value=${line##*:}
-	    targets["${drive}"]=${value#  }
-	else
-	   drive=
-	fi   
-    done
-
-    echo "{"
-    for target in "${!targets[@]}"
-    do
-	echo "  \"$target\": {"
-	if ! (echo "${targets[$target]}" | /usr/bin/grep "standby") > /dev/null 2>&1; then
-	    /usr/sbin/smartctl -A /dev/$target |/usr/bin/grep "^ *[0-9]" | /usr/bin/awk '{print "    \"" $2 "\":" $10 ","}'
-	fi
-	echo "    \"state\": \"${targets[$target]}\""
-	echo "  },"
-    done
-    echo '  "__dummy__":{}'
-    echo "}"
-}
+echo "{"
+LAST=""
+for target
+do
+    if [ -n "$LAST" ]; then
+	echo "${LAST}",
+	LAST=""
+    fi
+    STATUS=$(/usr/sbin/hdparm -C "/dev/${target}" \
+		 | /usr/bin/grep "state is:" \
+		 | cut -c 19-)
+    echo "  \"$target\": {"
+    if [ "S{STATUS}" = "standby" ]; then
+	echo '    "state": "standby"'
+    else
+	/usr/sbin/smartctl -A /dev/$target \
+	    | /usr/bin/grep "^ *[0-9]" \
+	    | /usr/bin/sed -e 's/\([0-9]*\)h.*m.*s$/\1/' \
+	    | /usr/bin/awk '{print "    \"" $2 "\":" $10 ","}'
+	echo "   \"state\": \"${targets[$target]}\""
+    fi
+    LAST="  }"
+done
+echo "$LAST"
+echo "}"
