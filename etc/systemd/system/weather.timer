@@ -1,8 +1,0 @@
-[Unit]
-Description=Timer to get SAMPLE values for zabbix agent
-
-[Timer]
-OnCalendar=*-*-* 1:5
-
-[Install]
-WantedBy=timer.target
